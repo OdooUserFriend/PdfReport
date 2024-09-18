@@ -1,0 +1,335 @@
+<odoo>
+    <template id="invoice_pdf">
+        <t t-if="not o" t-set="o" t-value="doc"/>
+        <t t-if="not company">
+            <!-- Multicompany -->
+            <t t-if="company_id">
+                <t t-set="company" t-value="company_id"/>
+            </t>
+            <t t-elif="o and 'company_id' in o">
+                <t t-set="company" t-value="o.company_id.sudo()"/>
+            </t>
+            <t t-else="else">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+        </t>
+        <main>
+
+            <table style="">
+                <tr>
+                    <td style="padding-right:0;margin-right:0;">
+                        <img t-att-src="image_data_uri(company.logo)"
+                             style="max-height: 100px;padding-right:0;margin-right:0;" alt="Company Logo"/>
+                    </td>
+                    <td style="">
+                        <div style="padding-left:15px">
+                            <p style="font-weight: bold; margin:0;">
+                                <t t-esc="company.name"/>
+                            </p>
+                            <p style="margin: 0;font-size:12px;">
+                                <span>
+                                    <t t-esc="company.city"/>
+                                </span>
+                                ,
+                                <span>
+                                    <t t-esc="company.country_id.name"/>
+                                </span>
+                            </p>
+                            <p style="margin: 0;font-size:12px;">
+                                Tel:
+                                <span>
+                                    <t t-esc="company.phone"/>
+                                </span>
+                            </p>
+                            <p style="margin: 0;font-size:12px;">Email:
+                                <t t-esc="company.email"/>
+                            </p>
+                            <p style="margin: 0;font-size:12px;">Website:
+                                <t t-esc="company.website"/>
+                            </p>
+                            <p style="margin: 0;font-size:12px;">Vat No:
+                                <t t-esc="company.vat"/>
+                            </p>
+                        </div>
+                    </td>
+                    <td style="text-align: right; vertical-align: top; padding-left: 20px;padding-top:20px;">
+                        <div>
+                            <p>
+                                <t t-esc="company.company_arabic"/>
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <div class="page">
+                        <h2 style="color:blue;padding-left:42%;">
+                            <t t-if="o.type == 'out_invoice'">Invoice</t>
+                            <t t-if="o.type == 'out_refund'">Credit Note</t>
+                            <t t-if="o.type == 'in_invoice'">Vendor Bill</t>
+                            <t t-if="o.type == 'in_refund'">Vendor Credit Note</t>
+                            <t t-if="o.type == 'out_receipt'">Sales Receipt</t>
+                            <t t-if="o.type == 'in_receipt'">Purchase Receipt</t>
+                        </h2>
+                        <hr style="border: 0; height: 1px; width;500px;background-color:black; margin-left: 10px;margin-right: 20px;"/>
+                        <table>
+                            <tr>
+                                <th style="padding-left:100px;">Date</th>
+                                <th style="padding-left:200px;white-space: nowrap;">
+                                    <span>
+                                        <t t-if="o.type == 'out_invoice'">Invoice No</t>
+                                        <t t-elif="o.type == 'out_refund'">Credit Note No</t>
+                                        <t t-elif="o.type == 'in_invoice'">Vendor Bill No</t>
+                                        <t t-elif="o.type == 'in_refund'">Vendor Credit Note No</t>
+                                        <t t-elif="o.type == 'out_receipt'">Sales Receipt No</t>
+                                        <t t-elif="o.type == 'in_receipt'">Purchase Receipt No</t>
+                                    </span>
+                                </th>
+                                <th style="padding-left:200px;">Reference</th>
+                            </tr>
+                            <tr>
+                                <td style="padding-left:100px;">
+                                    <span t-field="o.invoice_date"/>
+                                </td>
+                                <td style="padding-left:200px;">
+                                    <span t-field="o.name"/>
+                                </td>
+                                <td style="padding-left:200px;">
+                                    <span t-field="o.ref"/>
+                                </td>
+                            </tr>
+                        </table>
+                        <hr style="border: 0; height: 1px; width;500px;background-color:black; margin-left: 10px;margin-right: 20px;"/>
+                        <p style="padding-top:30px;padding-left:7px;margin: 0;">Customer:
+                            <span t-field="o.partner_id"/>
+                        </p>
+                        <p style="padding-left:7px;margin: 0;">
+                            <span t-field="o.partner_id.name_arabic"/>
+                        </p>
+                        <p style="padding-left:7px;margin: 0;">
+                            <span>
+                                <t t-esc="o.partner_id.street"/>
+                            </span>
+                            <span>
+                                <t t-if="o.partner_id.street2">,</t>
+                                <t t-esc="o.partner_id.street2"/>
+                            </span>
+                            <span>
+                                <t t-if="o.partner_id.city">,</t>
+                                <t t-esc="o.partner_id.city"/>
+                            </span>
+                            <span>
+                                <t t-if="o.partner_id.state_id">,</t>
+                                <t t-esc="o.partner_id.state_id.name"/>
+                            </span>
+                            <span>
+                                <t t-if="o.partner_id.country_id">,</t>
+                                <t t-esc="o.partner_id.country_id.name"/>
+                            </span>
+                        </p>
+
+                        <p style="padding-left:7px;margin: 0;">
+                            <span t-field="o.partner_id.street_arabic"/>
+                        </p>
+                        <p style="padding-left:7px;margin: 0;">
+                            <span t-field="o.partner_id.street2_arabic"/>
+                        </p>
+                        <p style="padding-left:7px;margin: 0;">
+                            <span t-field="o.partner_id.state_arabic"/>
+                        </p>
+                        <p style="padding-left:7px;margin: 0;">
+                            <span t-field="o.partner_id.country_arabic"/>
+                        </p>
+                        <p style="padding-left:7px;margin: 0;">
+                            <span t-field="o.partner_id.city_arabic"/>
+                        </p>
+                        <p style="padding-top:25px;padding-left:7px;">Vat Number:
+                            <span t-field="o.partner_id.vat"/>
+                        </p>
+                    </div>
+                    <div>
+                        <table>
+                            <tr>
+                                <th style="padding-left:15px;font-weight:550;font-size:11px;">ﺍﻟﺭﻗﻡ</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">ﺍﻟﺳﻠﻌﺔ ﻭﺻﻑ</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">ﺍﻟﺣﺳﺎﺏ</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">ﻣﺳﺗﻭﺩﻉ</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">ﺍﻟﻘﻳﺎﺱ ﻭﺣﺩﺓ</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">ﺍﻟﻛﻣﻳﺔ</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">ﺍﻟﻭﺣﺩﺓ ﺳﻌﺭ</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">ﺗﺧﻔﻳﺽ</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">ﺿﺭﻳﺑﺔ%</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">ﺿﺭﻳﺑﺔ</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">ﺍﻟﻣﺟﻣﻭﻉ(SAR)</th>
+                            </tr>
+                            <tr>
+                                <td colspan="11">
+                                    <hr style="border: 0; height: 1px; width: 100%; background-color: black; margin-left: 10px; margin-right: 20px;"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="padding-left:15px;font-weight:550;font-size:11px;">Sl#</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">Product</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">Account</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">Warehouse</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">UOM</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">Qty</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">Sales Price</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">Discount</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">VAT%</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">VAT</th>
+                                <th style="padding-left:23px;font-weight:550;font-size:11px;">Total(SAR)</th>
+                            </tr>
+                            <tr>
+                                <td colspan="11">
+                                    <hr style="border: 0; height: 1px; width: 100%; background-color: black; margin-left: 10px; margin-right: 20px;"/>
+                                </td>
+                            </tr>
+                            <t t-set="counter" t-value="0"/>
+                            <t t-foreach="o.invoice_line_ids" t-as="line">
+                                <tr>
+                                    <t t-set="counter" t-value="counter + 1"/>
+                                    <td style="padding-left:20px;font-weight:550;font-size:11px;">
+                                        <span t-esc="counter"/>
+                                    </td>
+                                    <td style="padding-left:40px;font-weight:550;font-size:11px;">
+                                        <span t-field="line.product_id"/>
+                                    </td>
+                                    <td style="padding-left:23px;font-weight:550;font-size:11px;">
+                                        <span t-field="line.account_id.name"/>
+                                    </td>
+                                    <td style="padding-left:23px;font-weight:550;font-size:11px;">
+                                        <span t-esc="line.sale_line_ids.move_ids.picking_id.picking_type_id.warehouse_id.name"/>
+                                    </td>
+                                    <td style="padding-left:45px;font-weight:550;font-size:11px;">
+                                        <span t-field="line.product_uom_id.name"/>
+                                    </td>
+                                    <td style="padding-left:23px;font-weight:550;font-size:11px;">
+                                        <span t-field="line.quantity"/>
+                                    </td>
+                                    <td style="padding-left:23px;font-weight:550;font-size:11px;">
+                                        <span t-field="line.price_unit"/>
+                                    </td>
+                                    <td style="padding-left:23px;font-weight:550;font-size:11px;">
+                                        <span t-field="line.discount"/>%
+                                    </td>
+                                    <td style="padding-left:23px;font-weight:550;font-size:11px;">
+                                        <span t-field="line.tax_ids"/>
+                                    </td>
+                                    <td style="padding-left:23px;font-weight:550;font-size:11px;">
+                                        <span t-foreach="line.tax_ids" t-as="tax">
+                                            <span t-field="tax.amount"/>
+                                        </span>
+
+                                    </td>
+                                    <td style="padding-left:23px;font-weight:550;font-size:11px;">
+                                        <span t-field="line.price_subtotal"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </table>
+                        <hr style="border: 0; height: 1px; width: 96%; background-color: black; margin-left: 12px; margin-right: 20px;"/>
+                    </div>
+                </t>
+            </t>
+            <t t-foreach="docs" t-as="o">
+            <div style="width: 100%; display: inline-block; margin-top: 50px;padding-left:7px;">
+
+                <t t-set="total_before_vat" t-value="sum(line.price_subtotal for line in o.invoice_line_ids)"/>
+
+                <!-- Calculate the total VAT -->
+                <t t-set="total_vat" t-value="sum(line.price_subtotal * tax.amount / 100 for line in o.invoice_line_ids for tax in line.tax_ids)"/>
+                <!-- Calculate the total Discount -->
+                <t t-set="total_discount" t-value="sum(line.price_unit * line.quantity * line.discount / 100 for line in o.invoice_line_ids)"/>
+                <!-- Calculate the grand total -->
+                <t t-set="grand_total" t-value="total_before_vat + total_vat - total_discount"/>
+
+
+
+
+                <!-- English Table -->
+                <div style="width: 45%; float: left;">
+                    <table border="1" style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 10px;">Total Amount Before VAT</td>
+                            <td style="text-align: right; padding: 10px;">
+                                <span t-esc="total_before_vat"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px;">Discount</td>
+                            <td style="text-align: right; padding: 10px;">
+                                <span t-esc="total_discount"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px;">VAT</td>
+                            <td style="text-align: right; padding: 10px;">
+                                <span t-esc="total_vat"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px;">Net Amount</td>
+                            <td style="text-align: right; padding: 10px;">
+                                <span t-esc="grand_total"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Arabic Table -->
+                <div style="width: 45%; float: right;padding-right:28px;">
+                    <table border="1" style="width: 100%; text-align: right; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 10px;">
+                                <span t-esc="o.convert_to_arabic(total_before_vat)"/>
+                            </td>
+                            <td style="padding: 10px;">المجموع الكلي قبل الضريبة</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px;">
+                                <span t-esc="o.convert_to_arabic(total_discount)"/>
+                            </td>
+                            <td style="padding: 10px;">ﺍﻟﺨﺼﻢ</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px;">
+                                <span t-esc="o.convert_to_arabic(total_vat)"/>
+                            </td>
+                            <td style="padding: 10px;">ﺍﻟﻤﻀﺎﻓﺔ ﺍﻟﻘﻴﻤﺔ ﺿﺮﻳﺒﺔ</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px;">
+                                <span t-esc="o.convert_to_arabic(grand_total)"/>
+                            </td>
+                            <td style="padding: 10px;">ﺍﻟﺼﺎﻓﻲ ﺍﻹﺟﻤﺎﻟﻲ</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            </t>
+            <div>
+                <p style="padding-left:7px;padding-top:20px;font-size:14px;"><b>Notes :</b></p>
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 30%;">
+                            <p>Prepared by</p>
+                        </td>
+                        <td style="width: 30%;">
+                            <p>Received by</p>
+                        </td>
+                        <td style="width: 30%;">
+                            <p>Returned by</p>
+                        </td>
+                    </tr>
+                    <tr >
+                        <td colspan="3">
+                            <hr style="padding-left:6px;border: 1px dotted black; width: 97%;margin-top: 30px;margin-right: 20px;"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </main>
+    </template>
+</odoo>

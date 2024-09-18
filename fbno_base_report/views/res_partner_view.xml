@@ -1,0 +1,23 @@
+<odoo>
+    <record id="view_partner_form_arabic" model="ir.ui.view">
+        <field name="name">res.partner.form.arabic</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('o_address_format')]" position="after">
+                <div>
+                    <h2>
+                        <field name="name_arabic" placeholder="Arabic Name"/>
+                        <field name="street_arabic" placeholder="Arabic Street"/>
+                        <field name="street2_arabic" placeholder="Arabic Street2"/>
+                        <field name="state_arabic" placeholder="Arabic State"/>
+                        <field name="country_arabic" placeholder="Arabic Country"/>
+                        <field name="city_arabic" placeholder="Arabic City"/>
+                    </h2>
+                </div>
+            </xpath>
+        </field>
+
+
+    </record>
+</odoo>

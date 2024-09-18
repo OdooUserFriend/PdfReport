@@ -1,0 +1,13 @@
+<odoo>
+    <data>
+        <!-- Register the report action -->
+        <report
+            id="action_invoice_pdf"
+            model="account.move"
+            string="Custom Invoice"
+            report_type="qweb-pdf"
+            name="fbno_base_report.invoice_pdf"
+            file="fbno_base_report.invoice_pdf"
+        />
+    </data>
+</odoo>
